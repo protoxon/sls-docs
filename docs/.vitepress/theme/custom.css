@@ -1,0 +1,322 @@
+/**
+ * SLS docs — extend VitePress default theme.
+ * Tweak --vp-c-brand-* and fonts below to match your brand.
+ */
+
+:root {
+  --vp-c-brand-1: #2dd4bf;
+  --vp-c-brand-2: #14b8a6;
+  --vp-c-brand-3: #0d9488;
+  --vp-c-brand-soft: rgba(20, 184, 166, 0.16);
+
+  --vp-c-bg: #f8fafc;
+  --vp-c-bg-alt: #f1f5f9;
+  --vp-c-bg-elv: #ffffff;
+
+  --vp-font-family-base: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.dark {
+  --vp-c-bg: #0c1222;
+  --vp-c-bg-alt: #111827;
+  --vp-c-bg-elv: #151d2e;
+
+  --vp-c-divider: rgba(148, 163, 184, 0.12);
+  --vp-c-text-1: rgba(248, 250, 252, 0.94);
+  --vp-c-text-2: rgba(203, 213, 225, 0.82);
+  --vp-c-text-3: rgba(148, 163, 184, 0.65);
+
+  --vp-c-brand-soft: rgba(45, 212, 191, 0.12);
+}
+
+/* Home hero: subtle grid and glow */
+.VPHome .VPHero {
+  position: relative;
+}
+
+.VPHome .VPHero::before {
+  content: '';
+  position: absolute;
+  inset: -20% -10% auto;
+  height: 70%;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(45, 212, 191, 0.22), transparent),
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.VPHome .VPHero .container {
+  position: relative;
+  z-index: 1;
+}
+
+.VPHome .VPHero .name,
+.VPHome .VPHero .text {
+  letter-spacing: -0.02em;
+}
+
+/* Home hero: larger “SLS” title (default theme: 32px → 48px → 56px) */
+.VPHome .VPHero .name {
+  font-size: 2.5rem !important;
+  line-height: 1.12 !important;
+}
+
+@media (min-width: 640px) {
+  .VPHome .VPHero .name {
+    font-size: 3.75rem !important;
+    line-height: 1.1 !important;
+  }
+}
+
+@media (min-width: 960px) {
+  .VPHome .VPHero .name {
+    font-size: 4.25rem !important;
+    line-height: 1.08 !important;
+  }
+}
+
+/* Full name under “SLS” — small red line (hero.text is normally title-sized) */
+.VPHome .VPHero .heading .text:has(.home-hero-subtitle) {
+  font-size: 0.8125rem !important;
+  line-height: 1.35 !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.04em;
+  color: #dc2626;
+  -webkit-text-fill-color: #dc2626;
+  margin-top: 0.35rem;
+  max-width: none;
+}
+
+.dark .VPHome .VPHero .heading .text:has(.home-hero-subtitle) {
+  color: #f87171;
+  -webkit-text-fill-color: #f87171;
+}
+
+/* Home hero: readable measure and prose weight for the intro paragraphs */
+.VPHome .VPHero .tagline {
+  max-width: 40rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+@media (min-width: 640px) {
+  .VPHome .VPHero .tagline {
+    font-size: 1.125rem;
+    line-height: 1.62;
+  }
+}
+
+@media (min-width: 960px) {
+  .VPHome .VPHero .tagline {
+    font-size: 1.1875rem;
+    line-height: 1.65;
+  }
+}
+
+.VPHome .VPHero .main > p.tagline {
+  margin-bottom: 0;
+  white-space: normal;
+}
+
+.VPHome .VPHero .main > .actions {
+  padding-top: 0;
+}
+
+.VPHome .VPHero .tagline .home-hero-tagline-lead {
+  display: block;
+  margin-bottom: 0.4em;
+  font-size: 1.08em;
+  line-height: 1.55;
+  font-weight: 400;
+  color: var(--vp-c-text-1);
+}
+
+.VPHome .VPHero .tagline .home-hero-tagline-secondary {
+  display: block;
+  margin-top: 0;
+  font-size: 0.88em;
+  line-height: 1.55;
+  color: var(--vp-c-text-2);
+}
+
+.VPHome .VPFeature {
+  border-radius: 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.VPHome .VPFeature:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 12px 40px -12px rgba(45, 212, 191, 0.15);
+}
+
+/* Contributing page — muted supplementary line */
+.contributing-note {
+  margin: 0.35rem 0 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--vp-c-text-3);
+}
+
+.contributing-note a {
+  color: var(--vp-c-text-3);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contributing-note a:hover {
+  color: var(--vp-c-text-2);
+}
+
+/* Home: GitHub chip on the same row as hero buttons (to the right of Reference) */
+.VPHome .VPHero .main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 12px;
+}
+
+.VPHome .VPHero .main > h1.heading,
+.VPHome .VPHero .main > p.tagline {
+  flex: 1 1 100%;
+  width: 100%;
+}
+
+/* Flatten .actions so each .action + .home-github-star share one flex row */
+.VPHome .VPHero .main > .actions {
+  display: contents;
+}
+
+/* .action stays under .actions in the DOM; > .action would not match */
+.VPHome .VPHero .main .action,
+.VPHome .VPHero .main > .home-github-star {
+  margin-top: 12px;
+}
+
+/* Slight extra space before the star chip so it doesn’t read tighter than Guide Reference */
+.VPHome .VPHero .main > .home-github-star {
+  margin-left: 6px;
+}
+
+@media (min-width: 640px) {
+  .VPHome .VPHero .main .action,
+  .VPHome .VPHero .main > .home-github-star {
+    margin-top: 16px;
+  }
+}
+
+.VPHome .VPHero.has-image .main {
+  justify-content: center;
+}
+
+@media (min-width: 960px) {
+  .VPHome .VPHero.has-image .main {
+    justify-content: flex-start;
+  }
+}
+
+/* Home: GitHub icon + Star + count + gold star, matches VPButton alt (gray) */
+.home-github-star {
+  display: flex;
+  align-items: center;
+}
+
+.home-github-star-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 20px;
+  padding: 0 18px;
+  line-height: 38px;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-decoration: none;
+  border: 1px solid var(--vp-button-alt-border);
+  color: var(--vp-button-alt-text);
+  background-color: var(--vp-button-alt-bg);
+  transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+}
+
+.home-github-star-link:hover {
+  border-color: var(--vp-button-alt-hover-border);
+  color: var(--vp-button-alt-hover-text);
+  background-color: var(--vp-button-alt-hover-bg);
+}
+
+.home-github-star-link:active {
+  border-color: var(--vp-button-alt-active-border);
+  color: var(--vp-button-alt-active-text);
+  background-color: var(--vp-button-alt-active-bg);
+}
+
+.home-github-icon {
+  flex-shrink: 0;
+  opacity: 0.92;
+}
+
+.home-star-label {
+  flex-shrink: 0;
+}
+
+.home-star-count-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.home-star-count {
+  min-width: 2.25ch;
+  text-align: right;
+}
+
+.home-gold-star {
+  flex-shrink: 0;
+  color: #ca8a04;
+  filter: drop-shadow(0 0 2px rgba(234, 179, 8, 0.65))
+    drop-shadow(0 0 6px rgba(202, 138, 4, 0.4));
+  transition: color 0.25s, filter 0.25s;
+}
+
+.dark .home-gold-star {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.55))
+    drop-shadow(0 0 8px rgba(251, 191, 36, 0.35));
+}
+
+.home-github-star-link:hover .home-gold-star {
+  color: #a16207;
+  filter: drop-shadow(0 0 3px rgba(234, 179, 8, 0.75))
+    drop-shadow(0 0 8px rgba(180, 83, 9, 0.45));
+}
+
+.dark .home-github-star-link:hover .home-gold-star {
+  color: #fcd34d;
+  filter: drop-shadow(0 0 3px rgba(253, 224, 71, 0.6))
+    drop-shadow(0 0 10px rgba(251, 191, 36, 0.4));
+}
+
+/* Reference: Protocube CLI — keep flag column from wrapping */
+.cli-ref-global-flags table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.cli-ref-global-flags table th:first-child,
+.cli-ref-global-flags table td:first-child {
+  width: 28%;
+  min-width: 10rem;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.cli-ref-muted-note {
+  margin: 0.65rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--vp-c-text-3);
+}
