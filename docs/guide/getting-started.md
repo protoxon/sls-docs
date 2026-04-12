@@ -40,6 +40,6 @@ Sources: [`protocube/docker-compose.yml`](https://github.com/jessefaler/SLS/blob
 
 ## After installation
 
-- Learn how to set up [**vSLS**](./vsls) if you are using [**Velocity**](https://docs.papermc.io/velocity).
+- Learn how to set up [**vSLS**](./vsls/) if you are using [**Velocity**](https://docs.papermc.io/velocity).
 - Learn how to create [blueprints](./blueprints/examples/) and [software configurations](./software-configurations/introduction).
 - Stuck? See [Troubleshooting](./troubleshooting/) or ask on [Discord](https://discord.gg/BrH8GtyGSh).

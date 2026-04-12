@@ -53,7 +53,7 @@ A live demo **Minecraft** network is available if you want to try SLS in action.
 
 This demo showcases how servers can be dynamically created and managed in a real environment.
 
-The demo utilizes the [**vSLS**](./vsls) plugin.
+The demo utilizes the [**vSLS**](./vsls/) plugin.
 
 ## More Information
 

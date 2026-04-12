@@ -27,7 +27,7 @@ Artifacts are on Maven Central
 
 `https://repo1.maven.org/maven2/io/github/protoxon/S4J/`
 
-Use the version from the badge above, or substitute `1.0.1` with a newer release when available.
+Use the version from the badge above, or substitute `1.0.2` with a newer release when available.
 
 **Maven**
 
@@ -35,7 +35,7 @@ Use the version from the badge above, or substitute `1.0.1` with a newer release
 <dependency>
     <groupId>io.github.protoxon</groupId>
     <artifactId>S4J</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.protoxon:S4J:1.0.1")
+    implementation("io.github.protoxon:S4J:1.0.2")
 }
 ```
 
@@ -59,7 +59,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.github.protoxon:S4J:1.0.1'
+    implementation 'io.github.protoxon:S4J:1.0.2'
 }
 ```
 
