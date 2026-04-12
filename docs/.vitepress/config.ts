@@ -4,7 +4,7 @@ import type { DefaultTheme } from 'vitepress/theme'
 export default defineConfig({
   base: '/sls-docs/',
   title: 'SLS',
-  description: 'Declarative orchestration for ephemeral game servers and related tooling.',
+  description: 'SLS is an open-source system for automating the deployment, scaling, and management of containerized game servers.',
 
   appearance: 'force-dark',
 
