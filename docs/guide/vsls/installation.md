@@ -1,6 +1,6 @@
 # Installing vSLS
 
-[vSLS](/guide/vsls/) is installed on your **Velocity** proxy as a normal plugin JAR. Complete [Installing Protocube](/guide/installing-protocube) and [Installing the daemon](/guide/installing-daemon) (or equivalent) before wiring the plugin to your API.
+[vSLS](/guide/vsls/) is installed on your **Velocity** proxy as a normal plugin JAR. Install [Protocube](/guide/installing-protocube) and the [daemon](/guide/installing-daemon) before setting up vSLS.
 
 ## Requirements
 

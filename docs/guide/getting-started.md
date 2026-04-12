@@ -1,18 +1,27 @@
 # Getting started
 
-SLS is built around **Protocube** (the controller) and one or more **daemons** (nodes that run Docker workloads). Install Protocube first, then add a daemon on each machine that should host game servers.
+SLS is composed of a central controller (Protocube) and one or more worker nodes (Daemons) responsible for running containerized game server workloads. Protocube should be installed first, followed by a Daemon on each host node.
 
-| Step | Guide |
-| --- | --- |
-| 1. Protocube | [Installing Protocube](./installing-protocube) |
-| 2. Daemon (per node) | [Installing the daemon](./installing-daemon) |
+| Step                 | Guide                                          |
+|----------------------|------------------------------------------------|
+| 1. Protocube         | [Installing Protocube](./installing-protocube) |
+| 2. Daemon (per node) | [Installing the daemon](./installing-daemon)   |
 
 ## Host requirements
 
-The **daemon** expects a full Linux environment on the host (Docker, cgroups, mount behavior used for game servers). If you use Windows, run Protocube and daemons inside [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/about), not only in a Windows-native shell.
+The **daemon** expects a full Linux environment on the host. If you use Windows, run Protocube and daemons inside [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/about).
 
-- **Docker** — Install Docker Engine (or a compatible runtime) on that Linux environment.
-- **WSL** — If you use Docker Desktop on Windows, prefer **Docker inside the same WSL distro** you use for SLS, or expect networking and socket paths to need extra care. A dedicated Linux VM or bare metal avoids those edge cases.
+- **Docker** — Install Docker Engine on that Linux environment.
+> **WSL for Windows** — If you are using Windows, run SLS inside [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/about) to provide a compatible Linux environment.
+
+## Ways to Run SLS
+
+There are two main ways to run SLS:
+
+1. **Docker (recommended)** — Use the official Docker images and Docker Compose files
+2. **Native binaries** — Run compiled binaries from the [SLS Releases](https://github.com/jessefaler/SLS/releases) page
+
+For setup instructions, see [Installing Protocube](./installing-protocube) and [Installing the Daemon](./installing-daemon).
 
 ## Images and releases
 
@@ -23,7 +32,7 @@ Binaries and changelog: [SLS GitHub Releases](https://github.com/jessefaler/SLS/
 
 ## Official Docker Compose files
 
-Use **Protocube** on the controller host, then **Daemon (node)** on each node (each in its own directory and `docker compose` project).
+These are official Docker Compose files for running Protocube and the Daemon in Docker.
 
 <ComposeDownloads which="all" />
 
@@ -31,5 +40,6 @@ Sources: [`protocube/docker-compose.yml`](https://github.com/jessefaler/SLS/blob
 
 ## After installation
 
-- Author or import [blueprints](./blueprints/examples/) and [software configurations](./software-configurations/introduction).
+- Learn how to set up [**vSLS**](./vsls) if you are using [**Velocity**](https://docs.papermc.io/velocity).
+- Learn how to create [blueprints](./blueprints/examples/) and [software configurations](./software-configurations/introduction).
 - Stuck? See [Troubleshooting](./troubleshooting/) or ask on [Discord](https://discord.gg/BrH8GtyGSh).

@@ -1,6 +1,6 @@
 # Installing Protocube
 
-**Protocube** is the SLS control plane: it tracks instances and coordinates **nodes** (daemons). Install it once before you add nodes. For shared prerequisites (Linux, WSL, Docker), read [Getting started](./getting-started) first.
+**Protocube** is the SLS control plane it tracks instances and coordinates **nodes** (daemons). Install it once before you add nodes. For shared prerequisites (Linux, WSL, Docker), read [Getting started](./getting-started) first.
 
 Official image: `ghcr.io/jessefaler/sls/protocube:latest`  
 Binaries and release notes: [SLS GitHub Releases](https://github.com/jessefaler/SLS/releases).
@@ -13,22 +13,19 @@ Download the official compose definition or open it on GitHub: [`protocube/docke
 
 ## Run Protocube with Docker (recommended)
 
-1. Save the compose file as `docker-compose.yml` in an empty directory (use the download above, or copy from GitHub).
-2. Create the host paths the file bind-mounts (adjust ownership to the user that runs Docker if you do not run as root):
+1. Save the Compose file as `docker-compose.yml` in an empty directory (download it above or copy it from GitHub).
 
-   ```bash
-   sudo mkdir -p /etc/sls/protocube /var/lib/sls /var/log/sls/protocube /tmp/sls/protocube
-   ```
-
-3. Start the stack:
+2. Start the stack:
 
    ```bash
    docker compose up -d
    ```
 
-The stack maps **`5620`** → Protocube. The compose file sets `extra_hosts` so names like `protocube.sls.net` and `daemon.sls.net` resolve **inside** containers; your **host** may still need matching entries in `/etc/hosts` if you use those hostnames from the host or from native binaries.
+By default, Protocube listens on port `5620`, which is mapped to the host in the Compose file.
 
-On first start, Protocube should materialize a default config under **`/etc/sls/protocube/`** on the host (via the volume mount). Continue with [Configuring Protocube](#configuring-protocube).
+The Compose configuration also sets `extra_hosts` so hostnames like `protocube.sls.net` and `daemon.sls.net` resolve **inside containers**. If you need to use these hostnames from the **host system** or from native binaries, you may need to add matching entries to your `/etc/hosts` file.
+
+On first start Protocube will create a default config under **`/etc/sls/protocube/`**. Continue with [Configuring Protocube](#configuring-protocube).
 
 ## Run Protocube from a release binary
 
@@ -40,7 +37,7 @@ On first start, Protocube should materialize a default config under **`/etc/sls/
    sudo mkdir -p /etc/sls/protocube /var/lib/sls /var/log/sls/protocube /tmp/sls/protocube
    ```
 
-3. Start Protocube (optional explicit config path):
+3. Start Protocube:
 
    ::: code-group
 
@@ -54,12 +51,14 @@ On first start, Protocube should materialize a default config under **`/etc/sls/
 
    :::
 
-If no config exists yet, the process typically writes defaults under **`/etc/sls/protocube/`** — confirm on your version; otherwise create `config.yml` from the project’s examples.
-
-Useful commands: [`protocube version`](/reference/cli#version), [`create-api-key`](/reference/cli#create-api-key), and the rest of the [CLI](/reference/cli).
+If no config exists yet the process will create a default config at **`/etc/sls/protocube/`**
 
 ## Configuring Protocube
 
 Protocube reads **`/etc/sls/protocube/config.yml`** by default (or the path you pass with `--config`). There you set blueprint and software roots, API listen address, TLS, and related options. See [Configuration](/reference/configuration) as that reference page grows.
 
 When Protocube is running, continue with [Installing the daemon](./installing-daemon) on each host that should run game servers.
+
+## Protocube CLI and API Keys
+
+For Protocube CLI commands and instructions on creating API keys, see [CLI Reference](/reference/cli).

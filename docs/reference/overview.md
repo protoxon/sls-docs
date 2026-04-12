@@ -16,10 +16,8 @@ Extend Protocube with **Go plugins** (`.so` files): routes, blueprint registry a
 
 ## Configuration
 
-Daemon / Protocube `config.yml` keys, env vars, and defaults: [Configuration](./configuration).
+Daemon / Protocube `config.yml` [Configuration](./configuration).
 
 ## CLI
 
 Protocube binary: global flags (`--config`, `--debug`), `version`, and API key subcommands: [CLI](./cli).
-
-Point readers at the canonical types in the `sls` repo when you add generated or deeper material.

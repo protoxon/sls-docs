@@ -1,65 +1,114 @@
-# Installing the daemon
 
-**Nodes** are **daemon** processes: they connect to Protocube, expose the node API, and start or stop server containers on that machine. Complete [Installing Protocube](./installing-protocube) (or have a reachable controller) before joining a node.
+# Installing the Daemon
 
-Official image: `ghcr.io/jessefaler/sls/daemon:latest`  
-Binaries: [SLS GitHub Releases](https://github.com/jessefaler/SLS/releases).
+**Daemons** are node processes that connect to **Protocube** and manage game server workloads.
+Install [Protocube](./installing-protocube) before setting up any daemon nodes.
 
-## Before you start
+* **Official Docker image:** `ghcr.io/jessefaler/sls/daemon:latest`
+* **Native binaries:** [SLS GitHub Releases](https://github.com/jessefaler/SLS/releases)
 
-- Install **Docker** on the host that will run servers. The daemon expects a full Linux environment; on Windows use WSL (see [Getting started](./getting-started)).
-- Plan how **Protocube** and this **daemon** reach each other. The compose files use logical names (`protocube.sls.net`, `daemon.sls.net`) via `extra_hosts` **inside** containers; from the host, use `127.0.0.1`, real DNS, or `/etc/hosts` as appropriate.
+---
 
-## Docker Compose file
+## Before You Start
 
-[`daemon/docker-compose.yml`](https://github.com/jessefaler/SLS/blob/main/daemon/docker-compose.yml) in the SLS repository includes comments on Docker socket access, **`rshared`** mounts for `/var/lib/sls`, `userns_mode`, and AppArmor — read them if you use user namespaces or a hardened Docker setup.
+* Install Docker on the host that will run servers. The Daemon requires a full Linux environment; on Windows, use WSL (see [Getting Started](./getting-started)).
+
+* Ensure Protocube and the Daemon can communicate. The default Compose setup uses internal hostnames (e.g., `protocube.sls.net`, `daemon.sls.net`) via `extra_hosts` inside containers.
+  From the host system, you may need to use `127.0.0.1`, real DNS, or `/etc/hosts`, depending on your deployment.
+
+---
+
+# Installation Options
+
+SLS supports two ways to run the Daemon:
+
+* **Docker** — Recommended For Most deployments, production, and simple setup
+* **Native binary**
+---
+# Option 1 — Run the Daemon with Docker (Recommended)
+
+## Docker Compose
+
+Download the official Compose file or view it on GitHub:
+[`daemon/docker-compose.yml`](https://github.com/jessefaler/SLS/blob/main/daemon/docker-compose.yml)
 
 <ComposeDownloads which="daemon" />
 
-## Run the daemon with Docker (recommended)
+### Steps
 
-1. On the node machine, save the compose file as `docker-compose.yml` in its own directory.
-2. Create log and config paths from the compose file:
+1. Create a directory on the node machine and save the Compose file as `docker-compose.yml`.
+
+2. Create required system directories:
 
    ```bash
    sudo mkdir -p /etc/sls/daemon /var/log/sls/daemon /tmp/sls/daemon
    ```
 
-3. Start the daemon:
+3. Start the Daemon:
 
    ```bash
    docker compose up -d
    ```
 
-On first start, expect a default **`/etc/sls/daemon/config.yml`** on the host. You still need a **node API key** and an edited config — see [Create a node API key](#create-a-node-api-key) and [Configure the daemon](#configure-the-daemon).
+On first start, a default configuration file will be generated at:
 
-## Run the daemon from a release binary
+```
+/etc/sls/daemon/config.yml
+```
 
-1. Download the **daemon** binary for your platform from [SLS Releases](https://github.com/jessefaler/SLS/releases).
-2. Install and prepare directories:
+You must then configure:
+
+* A **node API key**
+* The **Protocube connection settings**
+
+See:
+
+* [Create a node API key](#create-a-node-api-key)
+* [Configure the Daemon](#configure-the-daemon)
+
+---
+
+# Option 2 — Run the Daemon from a Native Binary
+
+## Steps
+
+1. Download the appropriate **daemon binary** for your platform from
+   [SLS Releases](https://github.com/jessefaler/SLS/releases)
+
+2. Prepare required directories:
 
    ```bash
    chmod +x daemon
    sudo mkdir -p /etc/sls/daemon /var/lib/sls /var/log/sls/daemon /tmp/sls/daemon
    ```
 
-3. The daemon needs **`CAP_SYS_ADMIN`** for overlay mounts used by server filesystems. Either grant the capability on the file:
+3. The Daemon requires **`CAP_SYS_ADMIN`** for overlay filesystem mounts used by server instances.
+
+   You may either grant the capability:
 
    ```bash
    sudo setcap cap_sys_admin+ep /path/to/daemon
    ```
 
-   or run the binary as **root** (for example `sudo ./daemon`). Without this, container provisioning can fail when mounting layers.
+   or run as root:
 
-4. Run it:
+   ```bash
+   sudo ./daemon
+   ```
+
+   Without this permission, server provisioning and mounts may fail.
+
+4. Start the Daemon:
 
    ```bash
    ./daemon --config /etc/sls/daemon/config.yml
    ```
 
-## Create a node API key
+---
 
-The daemon authenticates to Protocube with an API key you generate on the controller.
+# Create a Node API Key
+
+The Daemon authenticates to Protocube using an API key generated on the controller.
 
 ::: code-group
 
@@ -73,31 +122,43 @@ protocube create-api-key
 
 :::
 
-The default Protocube compose file sets `container_name: SLS`. If you changed it, substitute that name in `docker exec`.
+> If you changed the default container name, replace `SLS` with your configured name in the `docker exec` command.
 
-Follow the interactive prompts and copy the issued secret. For scripting, use non-interactive flags on [`create-api-key`](/reference/cli#create-api-key) (scopes such as **`node`** when offered).
+Follow the prompts and copy the generated token.
 
-## Configure the daemon
+For more information on managing API keys see: [`create-api-key`](/reference/cli#create-api-key)
 
-Edit **`/etc/sls/daemon/config.yml`** on the node.
+---
 
-### Connect to Protocube
+# Configure the Daemon
 
-Under **`remote`**, set the URL this **daemon** can use to reach Protocube’s API and paste the token:
+Edit:
 
-```yaml
+```
+/etc/sls/daemon/config.yml
+```
+
+---
+
+## Protocube Connection
+
+Configure how the Daemon connects to Protocube:
+
+```yaml id="k9d2q0"
 remote:
   url: http://protocube.sls.net:5620
   token: sls_live_9y1Vli9h9ty_your_api_key
 ```
 
-Use a real URL if you do not use the compose `extra_hosts` names (for example `http://10.0.0.5:5620` or `https://protocube.example.com`).
+> Replace the URL if you are not using Compose hostnames (e.g. use an IP or real domain).
 
-### Node API
+---
 
-Ensure the daemon’s HTTP API matches how Protocube and operators reach this node:
+## Daemon API Configuration
 
-```yaml
+Configure how Protocube and external systems reach this Daemon:
+
+```yaml id="p4x8a1"
 api:
   url: http://daemon.sls.net:5585
   host: 0.0.0.0
@@ -108,13 +169,40 @@ api:
     key: /etc/ssl/private/sls.key
 ```
 
-Adjust **`url`** to the address Protocube should call (hostname or IP the controller can route to). Enable **`tls`** when you terminate TLS on the daemon.
+* `url` — The address Protocube uses to reach this node
+* Enable `tls` if terminating TLS directly on the Daemon
 
-Restart the daemon after changes (`docker compose restart` or restart the native process). Check logs to confirm it registers with Protocube.
+---
 
-## Next steps
+## Restart Daemon
 
-- Load blueprints and software definitions: [Blueprint examples](./blueprints/examples/), [Software configurations](./software-configurations/introduction).
-- If something fails to connect or authenticate, see [Troubleshooting](./troubleshooting/) ([API or connectivity](./troubleshooting/api-or-connectivity)).
+After configuration changes, restart the Daemon:
 
-For community help, use [Discord](https://discord.gg/BrH8GtyGSh) with versions, redacted config, and log snippets.
+* Docker:
+
+  ```bash
+  docker compose restart
+  ```
+
+* Native:
+
+  ```bash
+  pkill daemon && ./daemon --config /etc/sls/daemon/config.yml
+  ```
+
+Check logs to confirm the node successfully registers with Protocube.
+
+---
+
+# Next Steps
+
+- Learn how to set up [**vSLS**](./vsls/installation) if you are using [**Velocity**](https://docs.papermc.io/velocity).
+
+* Create Blueprints: [Blueprint examples](./blueprints/examples/)
+* Configure software: [Software configurations](./software-configurations/introduction)
+* Troubleshooting: [Troubleshooting guide](./troubleshooting/)
+
+For help, join the community:
+ [https://discord.gg/BrH8GtyGSh](https://discord.gg/BrH8GtyGSh)
+
+---
