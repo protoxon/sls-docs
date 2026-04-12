@@ -5,9 +5,14 @@
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
-    "serve": "vitepress serve docs"
+    "serve": "vitepress serve docs",
+
+    "docs:build": "vitepress build docs",
+    "predeploy": "npm run docs:build",
+    "docs:deploy": "gh-pages -d docs/.vitepress/dist"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "vitepress": "^1.6.4",
     "vue": "^3.5.32"
   },

@@ -1,6 +1,6 @@
 # vSLS
 
-Uses the vSLS plugin annotations for on-join commands and matchmaking.
+Uses the vSLS plugin annotations for on-join commands and matchmaking. For a field-by-field reference, see [Configuring vSLS](../../vsls/configuring#annotations-vsls).
 
 ```yaml
 

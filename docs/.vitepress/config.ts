@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitepress'
+import type { DefaultTheme } from 'vitepress/theme'
 
 export default defineConfig({
+  base: '/sls-docs/',
   title: 'SLS',
   description: 'Declarative orchestration for ephemeral game servers and related tooling.',
 
@@ -63,6 +65,15 @@ export default defineConfig({
             ],
           },
           {
+            text: 'vSLS',
+            items: [
+              { text: 'Overview', link: '/guide/vsls/' },
+              { text: 'Installation', link: '/guide/vsls/installation' },
+              { text: 'Configuring', link: '/guide/vsls/configuring' },
+              { text: 'Commands', link: '/guide/vsls/commands' },
+            ],
+          },
+          {
             text: 'Troubleshooting',
             items: [
               { text: 'Overview', link: '/guide/troubleshooting/' },
@@ -93,7 +104,7 @@ export default defineConfig({
         ],
       },
       { text: 'Contributing', link: '/contributing' },
-    ],
+    ] as DefaultTheme.NavItem[],
 
     sidebar: {
       '/guide/': [
@@ -141,6 +152,16 @@ export default defineConfig({
                 { text: 'Paper', link: '/guide/software-configurations/examples/paper' },
               ],
             },
+          ],
+        },
+        {
+          text: 'vSLS',
+          collapsed: true,
+          items: [
+            { text: 'Overview', link: '/guide/vsls/' },
+            { text: 'Installation', link: '/guide/vsls/installation' },
+            { text: 'Configuring', link: '/guide/vsls/configuring' },
+            { text: 'Commands', link: '/guide/vsls/commands' },
           ],
         },
         {

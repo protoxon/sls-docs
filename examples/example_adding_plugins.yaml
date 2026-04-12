@@ -28,3 +28,8 @@ state:
       source: "plugins/another-folder-with-your-plugins"
       target: "/plugins"
       mode: cow
+
+      # You can also copy individual plugins into the server at start up
+      copy:
+        - sls/files/Plugin1.jar:plugins/Plugin1.jar
+        - sls/files/Plugin2.jar:plugins/Plugin2.jar

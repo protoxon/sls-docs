@@ -150,16 +150,32 @@ state:
     - /host/path:/home/container:ro
 ```
 
-### `copy` {#copy}
+### Copy {#copy}
 
-Copy files into the server filesystem when the instance is created. Destinations are always relative to the server filesystem.
+Copies files into the server’s filesystem at startup. All destination paths are relative to the server filesystem.
 
-Paths inside the SLS folder can always be used as sources. Sources outside the SLS folder must be allowed in the daemon configuration; see [Host Mounts and Allowed Mounts](/reference/configuration#host-mounts-and-allowed-mounts).
+#### Source Path Resolution
+
+Source paths are resolved as follows:
+
+* **Relative paths (no leading `/`)**<br>
+  If the path does not start with a `/` (e.g., `files/Plugin.jar`), it is resolved relative to the daemon’s root directory:
+  `{root_directory}/files/Plugin.jar`
+
+* **Absolute paths (leading `/`)**<br>
+  If the path starts with `/`, it is treated as a standard absolute path on the host system.
+
+#### Permissions
+
+If you are copying from a location outside the daemon’s root directory, the path must be explicitly allowed in the daemon’s `allowed_mounts` configuration.
+
+For more information on configuring allowed paths, see **[Host Mounts and Allowed Mounts](/reference/configuration#host-mounts-and-allowed-mounts)**.
 
 ```yaml
 state:
   copy:
-    - sls/files/config.yml:plugins/config.yml
+    - files/Plugin1.jar:plugins/Plugin1.jar
+    - files/Plugin2.jar:plugins/Plugin2.jar
 ```
 
 ### `env` {#env}
