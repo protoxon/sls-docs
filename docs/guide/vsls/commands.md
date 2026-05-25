@@ -9,6 +9,7 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 - [Create](#create)
 - [Start](#start)
 - [Join](#join)
+- [Find](#find)
 - [System](#system)
 - [Node](#node)
 - [Console](#console)
@@ -145,13 +146,15 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 
 **Permission:** `sls.command.admin` to connect **other** players; joining **yourself** does not require admin.
 
-**Description:** Creates the server if needed, starts it, waits until status is **ready**, then moves the chosen player(s) to it.
+**Description:** Creates the server if needed, starts it, waits until status is **ready**, then moves the chosen player(s) to it. Or connect to the server a player is already on.
 
 **Usage:**
 
 ```
 /sls join <blueprint_type> <blueprint_id>
 /sls join <blueprint_type> <blueprint_id> [all | local | <player>]
+/sls join player <player>
+/sls join player <player> --force
 ```
 
 **Arguments:**
@@ -163,6 +166,26 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 | `all` | Everyone on the proxy. |
 | `local` | Everyone on the same backend server as the sender. |
 | `<player>` | One player by username. |
+| `player <player>` | Connects the sender to the vSLS server that player is on. Respects blueprint `matchmaking.maxPlayers` for normal players. |
+| `--force` | Admin only (`sls.command.admin`). Bypasses blueprint capacity for `join player`. |
+
+**Details:**
+
+- If an admin joins a player on a server already at `matchmaking.maxPlayers`, vSLS shows a warning with a **Join Anyway** option that runs `join player` with `--force` instead of blocking silently.
+
+---
+
+## Find
+
+**Permission:** None
+
+**Description:** Shows which vSLS server a player is currently on.
+
+**Usage:**
+
+```
+/sls find <player>
+```
 
 ---
 
