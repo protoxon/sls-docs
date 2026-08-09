@@ -8,21 +8,27 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 - [List](#list)
 - [Create](#create)
 - [Start](#start)
-- [Join](#join)
-- [Find](#find)
-- [System](#system)
-- [Node](#node)
-- [Console](#console)
-- [Blueprint](#blueprint)
-- [Debug](#debug)
-- [Delete](#delete)
-- [Logs](#logs)
-- [Reload](#reload)
+- [Pause](#pause)
+- [Resume](#resume)
+- [Restart](#restart)
 - [Stop](#stop)
 - [Kill](#kill)
-- [Dequeue](#dequeue)
+- [Reset](#reset)
+- [Join](#join)
+- [Find](#find)
+- [Delete](#delete)
+- [Console](#console)
+- [Logs](#logs)
+- [Install](#install)
+- [Blueprint](#blueprint)
+- [Mixin](#mixin)
+- [Node](#node)
+- [System](#system)
+- [Reload](#reload)
 - [Status](#status)
 - [Stats](#stats)
+- [Debug](#debug)
+- [Dequeue](#dequeue)
 - [Version](#version)
 - [General notes](#general-notes)
 
@@ -119,26 +125,162 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 
 **Permission:** `sls.command.admin`
 
-**Description:** Starts an existing server. Most useful when saving is enabled and the instance already exists (or was created earlier).
+**Description:** Starts an existing server that vSLS already tracks (for example after a stop, or when save kept the instance).
 
 **Usage:**
 
 ```
-/sls start <blueprint_type> <blueprint_id>
+/sls start <server>
 ```
 
 **Arguments:**
 
 | Argument | Meaning |
 |----------|---------|
-| `blueprint_type` | Blueprint type. |
-| `blueprint_id` | Blueprint id. |
+| `server` | Server id (short ids suggested by tab completion). |
 
 **Details:**
 
-- If the server does not exist yet, the command can create it, then start it.
-- Tab completion for types and ids.
-- Success output includes the server id.
+- Does not create a new instance from a blueprint — use **Create** or **Join** for that.
+- Fails with “No such server” if the id is unknown to vSLS.
+
+---
+
+## Pause
+
+**Permission:** `sls.command.admin`
+
+**Description:** Pauses a running server.
+
+**Usage:**
+
+```
+/sls pause
+/sls pause <server>
+```
+
+**Details:**
+
+- With no argument (players only): pauses the SLS server the sender is currently on.
+- Console must pass `<server>`.
+
+---
+
+## Resume
+
+**Permission:** `sls.command.admin`
+
+**Description:** Resumes a paused server.
+
+**Usage:**
+
+```
+/sls resume
+/sls resume <server>
+```
+
+**Details:**
+
+- With no argument (players only): resumes the SLS server the sender is currently on.
+- Console must pass `<server>`.
+
+---
+
+## Restart
+
+**Permission:** `sls.command.admin`
+
+**Description:** Restarts a server and queues connected players to rejoin when it reaches **starting**.
+
+**Usage:**
+
+```
+/sls restart
+/sls restart <server>
+```
+
+**Details:**
+
+- With no argument (players only): restarts the SLS server the sender is currently on.
+- Players on the server get a title/chat notice and are reconnected when ready (status listener times out after about 2 minutes).
+- Console must pass `<server>`.
+
+---
+
+## Stop
+
+**Permission:** `sls.command.admin`
+
+**Description:** Graceful shutdown for one server or all servers.
+
+**Usage:**
+
+```
+/sls stop
+/sls stop <server>
+/sls stop all
+/sls stop <server> force
+/sls stop all force
+```
+
+**Arguments:**
+
+| Argument | Meaning |
+|----------|---------|
+| *(none)* | Players only: stop the SLS server the sender is on. |
+| `force` | Unregister from vSLS even if shutdown fails. |
+
+**Details:**
+
+- Without `force`, a failed shutdown can leave the server registered.
+- `all` with no running servers prints an appropriate message.
+- Console must pass a server id or `all`.
+
+---
+
+## Kill
+
+**Permission:** `sls.command.admin`
+
+**Description:** Force-terminates a server (or all). Not a clean save; use **Stop** when you need a graceful exit.
+
+**Usage:**
+
+```
+/sls kill
+/sls kill <server>
+/sls kill all
+/sls kill <server> force
+/sls kill all force
+```
+
+**Details:**
+
+- Same `force` semantics as **Stop** for unregistering on partial failure.
+- With no argument (players only): kills the SLS server the sender is on.
+- Console must pass a server id or `all`.
+
+---
+
+## Reset
+
+**Permission:** `sls.command.admin`
+
+**Description:** Wipes saved overlay/world data for a server, then brings it back up and queues connected players to rejoin.
+
+**Usage:**
+
+```
+/sls reset
+/sls reset <server>
+```
+
+**Details:**
+
+- Stops the instance, clears overlay upper/work data, starts again, and reconnects players when status becomes **starting**.
+- With no argument (players only): resets the server the sender is currently on.
+- Console must pass `<server>`.
+- Not every server can be reset; unsupported targets report an error.
 
 ---
 
@@ -189,17 +331,154 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 
 ---
 
-## System
+## Delete
 
 **Permission:** `sls.command.admin`
 
-**Description:** Prints Protocube version and host information (CPU threads, memory, kernel, OS).
+**Description:** Permanently removes one server or every server vSLS tracks.
 
 **Usage:**
 
 ```
-/sls system
+/sls delete
+/sls delete <server>
+/sls delete all
+/sls delete <server> force
+/sls delete all force
 ```
+
+**Details:**
+
+- With no argument (players only): deletes the SLS server the sender is on.
+- `force` continues local unregister when the remote delete fails.
+- Per-server results are reported.
+- Console must pass a server id or `all`.
+
+---
+
+## Console
+
+**Permission:** `sls.command.admin`
+
+**Description:** Runs a line on a server console and tries to print captured output.
+
+**Usage:**
+
+```
+/sls console <server> <command>
+```
+
+**Arguments:**
+
+| Argument | Meaning |
+|----------|---------|
+| `server` | Target server id. |
+| `command` | Console line (arguments allowed). Leading `/` is stripped. |
+
+**Details:**
+
+- Output is gathered by sampling logs with increasing delays (for example 100 ms / 8 lines, 800 ms / 12 lines, 3000 ms / 25 lines).
+- Errors are highlighted; if nothing is captured, you may see a “no output” style message.
+- Works with both legacy (`>command`) and newer console formats.
+
+---
+
+## Logs
+
+**Permission:** `sls.command.admin`
+
+**Description:** Shows paginated console log lines for a server.
+
+**Usage:**
+
+```
+/sls logs <server>
+/sls logs <server> <page>
+/sls logs <server> <page> <lines>
+```
+
+**Arguments:**
+
+| Argument | Meaning |
+|----------|---------|
+| `server` | Server id, or `this` for the SLS server the sender is on. |
+| `page` | Page number (default `1`). |
+| `lines` | Lines per page (default `50`, max `1000`). Use `max` for the maximum. |
+
+**Details:**
+
+- Framed output with a pagination footer.
+- Invalid page numbers report the valid range.
+
+---
+
+## Install
+
+**Permission:** `sls.command.admin`
+
+**Description:** Inspects or re-runs a server’s software install job (phase, container status, install logs, reinstall).
+
+**Usage:**
+
+```
+/sls install info
+/sls install info <server>
+/sls install logs <server>
+/sls install logs <server> <page>
+/sls install logs <server> <page> <lines>
+/sls install reinstall <server>
+```
+
+**Arguments:**
+
+| Argument | Meaning |
+|----------|---------|
+| `server` | Server id, or `this` for the SLS server the sender is on. |
+| `page` / `lines` | Same pagination rules as **Logs** for install log output. |
+
+**Details:**
+
+- `info` shows install phase, container status/name, exit code, timestamps, and failure reason when present.
+- `info` with no server (players only) uses the sender’s current SLS server.
+- `reinstall` triggers a new install run for that server.
+
+---
+
+## Blueprint
+
+**Permission:** `sls.command.admin`
+
+**Description:** Pretty-prints one blueprint (YAML-like layout with colored keys/values). Blueprints shown are **resolved** (mixin `includes` already applied).
+
+**Usage:**
+
+```
+/sls blueprint <blueprint_id>
+```
+
+**Details:**
+
+- Field order matches the Protocube blueprint struct: `metadata`, `includes`, `server`, `state`, `save`, `annotations`.
+- Nested sections include limits, config patches, volumes, mounts, copy, and env.
+
+---
+
+## Mixin
+
+**Permission:** `sls.command.admin`
+
+**Description:** Pretty-prints one mixin (YAML-like layout with colored keys/values). Mixins shown are **resolved** (`extends` chains already flattened).
+
+**Usage:**
+
+```
+/sls mixin <mixin_id>
+```
+
+**Details:**
+
+- Field order matches the Protocube mixin struct: `mixin`, `extends`, `server`, `state`, `annotations`.
+- Tab completion suggests known mixin ids.
 
 ---
 
@@ -236,113 +515,17 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 
 ---
 
-## Console
+## System
 
 **Permission:** `sls.command.admin`
 
-**Description:** Runs a line on a server console and tries to print captured output.
+**Description:** Prints Protocube version and host information (CPU threads, memory, kernel, OS).
 
 **Usage:**
 
 ```
-/sls console <server> <command>
+/sls system
 ```
-
-**Arguments:**
-
-| Argument | Meaning |
-|----------|---------|
-| `server` | Target server id. |
-| `command` | Console line (arguments allowed). Leading `/` is stripped. |
-
-**Details:**
-
-- Output is gathered by sampling logs with increasing delays (for example 100 ms / 8 lines, 800 ms / 12 lines, 3000 ms / 25 lines).
-- Errors are highlighted; if nothing is captured, you may see a “no output” style message.
-- Works with both legacy (`>command`) and newer console formats.
-
----
-
-## Blueprint
-
-**Permission:** `sls.command.admin`
-
-**Description:** Pretty-prints one blueprint (YAML-like layout with colored keys/values).
-
-**Usage:**
-
-```
-/sls blueprint <blueprint_id>
-```
-
-**Details:**
-
-- Covers metadata, server block, resources, patches, volumes, annotations, and other fields the API returns.
-
----
-
-## Debug
-
-**Permission:** None (player-only)
-
-**Description:** Toggles extra debug messages for the executing player.
-
-**Usage:**
-
-```
-/sls debug
-```
-
-**Details:**
-
-- Not for console senders (players only).
-- Toggles on/off per player.
-
----
-
-## Delete
-
-**Permission:** `sls.command.admin`
-
-**Description:** Permanently removes one server or every server vSLS tracks.
-
-**Usage:**
-
-```
-/sls delete <server>
-/sls delete all
-```
-
-**Details:**
-
-- Fetches server metadata from the API before deletion.
-- Per-server results are reported.
-
----
-
-## Logs
-
-**Permission:** `sls.command.admin`
-
-**Description:** Shows recent console log lines for a server.
-
-**Usage:**
-
-```
-/sls logs <server>
-/sls logs <server> <lines>
-```
-
-**Arguments:**
-
-| Argument | Meaning |
-|----------|---------|
-| `server` | Server id. |
-| `lines` | Optional line count (must be a valid number when present). |
-
-**Details:**
-
-- Framed output; optional grey styling for readability.
 
 ---
 
@@ -350,7 +533,7 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 
 **Permission:** `sls.command.admin`
 
-**Description:** Reloads vSLS config and/or asks Protocube to reload blueprints or software definitions.
+**Description:** Reloads vSLS config and/or asks Protocube to reload blueprints (and mixins) or software definitions.
 
 **Usage:**
 
@@ -366,84 +549,15 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 
 | Mode | Behavior |
 |------|-----------|
-| *(none)* or `all` | Config + blueprints + software (same as “everything”). |
+| *(none)* or `all` | Config + blueprints/mixins + software. |
 | `config` | vSLS plugin config only. |
-| `blueprints` | API reload on Protocube, then refetch and refresh the local blueprint registry. |
+| `blueprints` | API reload on Protocube, then refetch and refresh the local blueprint **and** mixin registries. |
 | `software` | API request to reload software configuration on Protocube. |
 
 **Details:**
 
-- Blueprint reload typically prints how many blueprints loaded.
+- Blueprint reload prints how many blueprints and mixins loaded.
 - Errors include failure reasons from the API or plugin.
-
----
-
-## Stop
-
-**Permission:** `sls.command.admin`
-
-**Description:** Graceful shutdown for one server or all servers.
-
-**Usage:**
-
-```
-/sls stop <server>
-/sls stop all
-/sls stop <server> force
-/sls stop all force
-```
-
-**Arguments:**
-
-| Argument | Meaning |
-|----------|---------|
-| `force` | Unregister from vSLS even if shutdown fails. |
-
-**Details:**
-
-- Without `force`, a failed shutdown can leave the server registered.
-- `all` with no running servers prints an appropriate message.
-
----
-
-## Kill
-
-**Permission:** `sls.command.admin`
-
-**Description:** Force-terminates a server (or all). Not a clean save; use **Stop** when you need a graceful exit.
-
-**Usage:**
-
-```
-/sls kill <server>
-/sls kill all
-/sls kill <server> force
-/sls kill all force
-```
-
-**Details:**
-
-- Same `force` semantics as **Stop** for unregistering on partial failure.
-
----
-
-## Dequeue
-
-**Permission:** `sls.command.admin` to dequeue **others**; dequeuing **yourself** needs no admin node.
-
-**Description:** Removes the sender or selected players from matchmaking queues.
-
-**Usage:**
-
-```
-/sls dequeue
-/sls dequeue [all | local | <player>]
-```
-
-**Details:**
-
-- Tab completion for player names where applicable.
-- Feedback includes the server/queue context when relevant.
 
 ---
 
@@ -482,6 +596,45 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 
 ---
 
+## Debug
+
+**Permission:** `sls.command.admin`
+
+**Description:** Toggles extra debug messages for the executing player.
+
+**Usage:**
+
+```
+/sls debug
+```
+
+**Details:**
+
+- Players only (not console).
+- Toggles on/off per player.
+
+---
+
+## Dequeue
+
+**Permission:** `sls.command.admin` to dequeue **others**; dequeuing **yourself** needs no admin node.
+
+**Description:** Removes the sender or selected players from matchmaking queues.
+
+**Usage:**
+
+```
+/sls dequeue
+/sls dequeue [all | local | <player>]
+```
+
+**Details:**
+
+- Tab completion for player names where applicable.
+- Feedback includes the server/queue context when relevant.
+
+---
+
 ## Version
 
 **Permission:** None
@@ -499,5 +652,6 @@ Reference for the in-game **`/sls`** command tree. Unless noted, arguments are c
 ## General notes
 
 - Commands that need `sls.command.admin` fail with a permission error if the sender lacks it.
-- Server ids must match exactly (case-sensitive).
+- Server ids must match exactly (case-sensitive); many commands accept short ids via tab completion.
+- Several server commands accept no id when run by a player on an SLS server (they target the current server). Console usually requires an explicit id.
 - Tab completion is available for commands.
