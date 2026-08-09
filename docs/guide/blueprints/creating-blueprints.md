@@ -2,7 +2,7 @@
 
 Blueprints are YAML files that define how a server should run, including the software and version, container image, resource limits, configuration patches, filesystem layout, and environment variables.
 
-For background, see [Blueprints introduction](./introduction). For software definitions (images, mappings, install scripts), see [Configuring software](../software-configurations/configuring-software) and the [Paper example](../software-configurations/examples/paper).
+For background, see [Blueprints introduction](./introduction). To share settings across blueprints, see [Mixins](./mixins). For software definitions (images, mappings, install scripts), see [Configuring software](../software-configurations/configuring-software) and the [Paper example](../software-configurations/examples/paper).
 
 ## Create a blueprint file
 
@@ -24,6 +24,34 @@ blueprint:
 - **`id`** — Unique slug used to reference this Blueprint.
 - **`name`** — Display name.
 - **`type`** — Grouping label for your own organization or tooling.
+
+## `includes` {#includes}
+
+Top-level list of [mixin](./mixins) IDs to compose into this blueprint. Mixins are applied left-to-right, then the blueprint’s own `server`, `state`, and `annotations` win on conflicts.
+
+```yaml
+blueprint:
+  id: arcade
+  name: Arcade
+  type: minigame
+
+includes:
+  - shared_plugins
+  - default_limits
+
+server:
+  software: paper
+  version: "1.20.4"
+```
+
+- Top-level list (sibling of `blueprint` / `server`), not nested under `blueprint:`.
+- IDs must refer to existing mixins; duplicates in the list are rejected.
+
+For authoring mixins, see [Mixins](./mixins).
+
+::: tip Bulk-edit includes with bpctl
+To add or remove the same mixin across many blueprints at once, use [bpctl](https://github.com/SL-Network/bpctl). It rewrites only the `includes` field and leaves the rest of each file unchanged.
+:::
 
 ## `server`
 

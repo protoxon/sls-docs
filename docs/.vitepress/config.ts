@@ -37,6 +37,7 @@ export default defineConfig({
             items: [
               { text: 'Introduction', link: '/guide/blueprints/introduction' },
               { text: 'Creating blueprints', link: '/guide/blueprints/creating-blueprints' },
+              { text: 'Mixins', link: '/guide/blueprints/mixins' },
               {
                 text: 'Examples',
                 items: [
@@ -124,6 +125,7 @@ export default defineConfig({
           items: [
             { text: 'Introduction', link: '/guide/blueprints/introduction' },
             { text: 'Creating blueprints', link: '/guide/blueprints/creating-blueprints' },
+            { text: 'Mixins', link: '/guide/blueprints/mixins' },
             {
               text: 'Examples',
               collapsed: true,

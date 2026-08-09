@@ -20,8 +20,9 @@ For examples see [Blueprint examples](./examples/).
 
 ## In this section
 
-| Page                                         | What it covers                                                                             |
-|----------------------------------------------|--------------------------------------------------------------------------------------------|
-| Introduction (this page)                     | What Blueprints are and how SLS uses them                                                  |
-| [Creating blueprints](./creating-blueprints) | How to author a Blueprint YAML file: metadata, `server`, `state`, persistence, annotations |
-| [Examples overview](./examples/)             | Block Hunt, vSLS, plugins, volumes, config patches, and more                               |
+| Page                                         | What it covers                                                                                      |
+|----------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| Introduction (this page)                     | What Blueprints are and how SLS uses them                                                           |
+| [Creating blueprints](./creating-blueprints) | How to author a Blueprint YAML file: metadata, `includes`, `server`, `state`, persistence, annotations |
+| [Mixins](./mixins)                           | Reusable overlays composed into blueprints via `includes`                                           |
+| [Examples overview](./examples/)             | Block Hunt, vSLS, plugins, volumes, config patches, and more                                        |
