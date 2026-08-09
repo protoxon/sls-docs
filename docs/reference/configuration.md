@@ -6,8 +6,6 @@ Protocube can sync blueprints (and mixins) from git repositories into the local 
 
 Remote sources are cloned into a cache under `system.blueprints`, then the chosen repository subdirectory is mirrored into `dest`. After sync, Protocube loads YAML from `system.blueprints` as usual (startup and blueprint reload). Local files that were never synced from a source are left alone.
 
-Requires `git` on the Protocube host.
-
 ```yaml
 system:
   blueprints: "/var/lib/sls/blueprints"
@@ -19,8 +17,6 @@ blueprint:
       ref: "main"
       path: "."
       dest: "."
-      auth:
-        token_env: "GITHUB_TOKEN"
       update_on_reload: true
 ```
 
@@ -33,7 +29,7 @@ blueprint:
 | `ref` | Branch, tag, or commit to check out. Defaults to `main`. |
 | `path` | Subdirectory inside the repository to sync. Defaults to `.` (repository root). |
 | `dest` | Path relative to `system.blueprints` where files are written. Defaults to `.`. |
-| `auth.token_env` | Optional. Name of an environment variable holding a token for private **HTTPS** remotes. The token is passed to git for that process only and is not stored in `.git/config`. SSH remotes use normal SSH credentials instead. |
+| `auth.token` | Optional inline token for private **HTTPS** remotes. Prefer the `GITHUB_TOKEN` environment variable instead so secrets are not stored in config. SSH remotes use normal SSH credentials (`ssh-agent`) instead. |
 | `update_on_reload` | When `true` (default), this source is refreshed on blueprint reload as well as startup. Set to `false` to sync only at startup. |
 
 ### Multiple sources
@@ -60,7 +56,22 @@ If two sources share the same `dest`, later sources overwrite the same relative 
 
 ### Private repositories
 
-For HTTPS remotes, set a token in the environment and point `auth.token_env` at that variable name:
+For HTTPS remotes, set `GITHUB_TOKEN` in the environment (preferred). Protocube always reads this variable for HTTPS auth:
+
+```bash
+export GITHUB_TOKEN=ghp_...
+```
+
+```yaml
+blueprint:
+  sources:
+    - type: git
+      url: "https://github.com/org/private-blueprints.git"
+      ref: "main"
+      dest: "private"
+```
+
+You can also put a token inline with `auth.token` (used only when `GITHUB_TOKEN` is unset):
 
 ```yaml
 blueprint:
@@ -70,11 +81,7 @@ blueprint:
       ref: "main"
       dest: "private"
       auth:
-        token_env: "GITHUB_TOKEN"
-```
-
-```bash
-export GITHUB_TOKEN=ghp_...
+        token: "ghp_..."
 ```
 
 ## Host Mounts and Allowed Mounts {#host-mounts-and-allowed-mounts}
